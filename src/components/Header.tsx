@@ -14,7 +14,7 @@ const Header: React.FC = () => {
         </div>
         <div className="flex flex-col leading-tight">
           <span className="font-bold text-[17px] text-gray-900 tracking-tight font-[Google_Sans,Inter,system-ui]">
-            Licitasia
+            LicitAÍ
           </span>
           <span className="text-[11px] text-gray-400 hidden sm:block">Licitações e contratos</span>
         </div>
