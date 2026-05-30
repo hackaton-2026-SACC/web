@@ -8,7 +8,7 @@
 
 import type { DashboardApiResponse, CityMetrics } from '../types';
 
-const API_BASE = (import.meta.env.VITE_CHAT_URL as string | undefined) ?? 'https://chat-production-487e.up.railway.app/';
+const API_BASE = (import.meta.env.VITE_CHAT_URL as string | undefined) ?? 'https://chat-licitacao.up.railway.app/';
 
 /**
  * Busca os dados dos gráficos do dashboard no endpoint real.
