@@ -50,9 +50,10 @@ const PARAIBA_GERAL: CityMetrics = {
 export const getCityData = async (cityId: string): Promise<CityMetrics> => {
   const base = API_BASE.endsWith('/') ? API_BASE : `${API_BASE}/`;
   const name = cityId.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  const apiParam = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
   try {
-    const response = await fetch(`${base}${encodeURIComponent(name)}`, {
+    const response = await fetch(`${base}${encodeURIComponent(apiParam)}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
