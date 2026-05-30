@@ -36,8 +36,7 @@ const MarkdownText: React.FC<{ text: string }> = ({ text }) => {
 };
 
 const QUICK_QUESTIONS = [
-  "Qual é o maior contrato de João Pessoa?",
-  "Qual foi o maior gasto do Orgão da secretaria de Saúde em Licitações em Campina Grande?",
+  "Qual é o maior contrato de João Pessoa?"
 ];
 
 const ChatContextual: React.FC = () => {
