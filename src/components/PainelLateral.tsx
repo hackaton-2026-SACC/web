@@ -146,20 +146,6 @@ const PainelLateral: React.FC<PainelLateralProps> = ({ isModal = false, onClose 
               </div>
             </div>
 
-            {metrics.anomalias > 0 && (
-              <div className="flex flex-col gap-2">
-                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Alertas</p>
-                <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-3">
-                  <AlertTriangle size={22} className="text-red-500 shrink-0" />
-                  <div>
-                    <div className="text-[22px] font-extrabold text-red-600">{metrics.anomalias}</div>
-                    <div className="text-[12px] text-red-400">
-                      anomalia{metrics.anomalias > 1 ? "s" : ""} identificada{metrics.anomalias > 1 ? "s" : ""}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {!selectedCity && (
               <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 rounded-xl p-3 text-[12px] text-blue-700">

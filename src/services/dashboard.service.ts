@@ -48,14 +48,40 @@ const PARAIBA_GERAL: CityMetrics = {
 };
 
 export const getCityData = async (cityId: string): Promise<CityMetrics> => {
-  await new Promise((r) => setTimeout(r, 0));
+  const base = API_BASE.endsWith('/') ? API_BASE : `${API_BASE}/`;
+  const name = cityId.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  const apiParam = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+  try {
+    const response = await fetch(`${base}${encodeURIComponent(apiParam)}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        id: cityId,
+        name: data.nome_real || name,
+        totalContratos: data.contratos_pelo_municipio ?? 0,
+        valorTotal: data.gasto_pelo_municipio ?? 0,
+        anomalias: 0,
+        categoriaPredominante: 'Geral',
+        fornecedorRecorrente: data.orgaos_mais_contratam?.[0]?.orgao ?? 'Nenhum',
+      };
+    }
+  } catch (error) {
+    console.error('Erro ao buscar dados do municipio real:', error);
+  }
+
+  // Fallback em caso de erro na API
   return {
-    ...PARAIBA_GERAL,
     id: cityId,
-    name: cityId.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
-    totalContratos: Math.floor(Math.random() * 500) + 100,
-    valorTotal: Math.floor(Math.random() * 50_000_000) + 10_000_000,
-    anomalias: Math.floor(Math.random() * 20) + 2,
+    name,
+    totalContratos: 0,
+    valorTotal: 0,
+    anomalias: 0,
+    categoriaPredominante: 'Geral',
+    fornecedorRecorrente: 'Nenhum',
   };
 };
 
