@@ -1,76 +1,81 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, TrendingUp, Sparkles, Loader2 } from 'lucide-react';
-import { useAppContext } from '../hooks/useAppContext';
-import { getDashboardData } from '../services/dashboard.service';
-import type { DashboardData } from '../types';
-import GraficoCategoria from './charts/GraficoCategoria';
-import GraficoEvolucao from './charts/GraficoEvolucao';
-import GraficoFornecedores from './charts/GraficoFornecedores';
-import GraficoFaixaValor from './charts/GraficoFaixaValor';
+import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { getDashboardApiData } from '../services/dashboard.service';
+import type { DashboardApiResponse } from '../types';
+import GraficoOrgaos from './charts/GraficoOrgaos';
+import GraficoMunicipiosContratos from './charts/GraficoMunicipiosContratos';
+import GraficoMunicipiosGastos from './charts/GraficoMunicipiosGastos';
+import GraficoModalidades from './charts/GraficoModalidades';
+import GraficoEvolucaoGastos from './charts/GraficoEvolucaoGastos';
 
 const Dashboard: React.FC = () => {
-  const { selectedCity } = useAppContext();
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState<DashboardApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  console.log(data?.municipios_mais_gastam)
+
+  const fetchData = () => {
+    setLoading(true);
+    setError(null);
+    getDashboardApiData()
+      .then((d) => {
+        setData(d);
+        console.log(d)
+        setLoading(false);
+      })
+      .catch((err: Error) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
-    setLoading(true);
-    getDashboardData(selectedCity?.id).then((d) => {
-      setData(d);
-      setLoading(false);
-    });
-  }, [selectedCity]);
+    fetchData();
+  }, []);
 
-  if (loading || !data) {
+  if (loading) {
     return (
-      <section className="flex items-center justify-center gap-3 py-12 text-gray-400 text-[14px]">
-        <Loader2 size={22} className="text-blue-600 animate-spin-loader" />
-        <span>Atualizando visualizações...</span>
+      <section className="flex items-center justify-center gap-3 py-16 text-gray-400 text-[14px]">
+        <Loader2 size={22} className="text-blue-600 animate-spin" />
+        <span>Carregando dados do dashboard...</span>
+      </section>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <section className="flex flex-col items-center justify-center gap-4 py-16 text-gray-500">
+        <AlertCircle size={36} className="text-red-400" />
+        <p className="text-[14px] text-center max-w-xs">
+          Não foi possível carregar os dados.<br />
+          <span className="text-[12px] text-gray-400">{error}</span>
+        </p>
+        <button
+          onClick={fetchData}
+          className="flex items-center gap-2 text-[13px] font-medium text-blue-600 hover:text-blue-700 border border-blue-200 rounded-lg px-4 py-2 hover:bg-blue-50 transition-colors"
+        >
+          <RefreshCw size={14} />
+          Tentar novamente
+        </button>
       </section>
     );
   }
 
   return (
-    <section className="px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6 bg-gray-50">
-     
-
-      {/* Charts 2×2 grid → 1 col on mobile */}
+    <section className="px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-4 bg-gray-50">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <GraficoCategoria data={data.categorias} />
-        <GraficoEvolucao data={data.evolucao} />
-        <GraficoFornecedores data={data.fornecedores} />
-        <GraficoFaixaValor data={data.faixasValor} />
+        <GraficoOrgaos data={data.orgaos_mais_contratam} />
+        <GraficoMunicipiosContratos data={data.municipios_mais_contratam} />
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-none flex flex-col gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-            <Sparkles size={20} className="text-blue-600" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-[16px] font-bold text-gray-900 font-[Google_Sans,Inter,system-ui]">Insights para perguntas</h3>
-            <p className="text-[12px] text-gray-400 mt-0.5">
-              Análise gerada para{' '}
-              <strong className="text-blue-600">{selectedCity ? selectedCity.name : 'o Estado da Paraíba'}</strong>
-            </p>
-          </div>
-          <span className="flex items-center gap-1.5 text-[11px] font-semibold bg-green-50 text-green-600 border border-green-200 rounded-full px-2.5 py-1 flex-shrink-0">
-            <TrendingUp size={11} />
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse-dot" />
-            Beta
-          </span>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <GraficoMunicipiosGastos data={data.municipios_mais_gastam} />
+        <GraficoModalidades data={data.modalidades_mais_gastam} />
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-          {data.insights.map((insight, idx) => (
-            <div key={idx} className="flex items-start gap-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl px-3.5 py-3 transition-colors">
-              <div className="w-5 h-5 rounded-md bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <BarChart3 size={12} className="text-blue-600" />
-              </div>
-              <span className="text-[13px] text-gray-600 leading-relaxed">{insight}</span>
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <GraficoEvolucaoGastos data={data.evolucao_gastos_ano} />
       </div>
     </section>
   );

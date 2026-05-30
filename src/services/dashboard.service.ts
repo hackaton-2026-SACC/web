@@ -2,44 +2,54 @@
  * dashboard.service.ts
  *
  * Camada de serviço para dados do dashboard.
- * Atualmente retorna mocks. Futuramente, basta trocar a implementação
- * para chamadas Axios ao backend, mantendo a mesma interface.
- *
- * Exemplo de migração futura:
- *   import axios from 'axios';
- *   const BASE_URL = import.meta.env.VITE_API_URL;
- *   export const getDashboardData = (cityId?: string) =>
- *     axios.get(`${BASE_URL}/dashboard`, { params: { cityId } }).then(r => r.data);
+ * getDashboardApiData → faz GET no endpoint real e retorna a resposta diretamente.
+ * getCityData / getStateData → mantidos com mock para o PainelLateral.
  */
 
-import {
-  DASHBOARD_GERAL,
-  getDashboardForCity,
-  PARAIBA_GERAL,
-  CIDADES_MOCK,
-} from '../mocks/cidadesMock';
-import type { CityMetrics, DashboardData } from '../types';
+import type { DashboardApiResponse, CityMetrics } from '../types';
+
+const API_BASE = (import.meta.env.VITE_CHAT_URL as string | undefined) ?? 'https://chat-production-487e.up.railway.app/';
 
 /**
- * Retorna os dados do dashboard para o contexto atual.
- * @param cityId - ID da cidade selecionada (null = estado inteiro)
+ * Busca os dados dos gráficos do dashboard no endpoint real.
+ * A API retorna todos os campos com os nomes e tipos esperados pelo frontend:
+ *   - orgaos_mais_contratam     → { orgao, contratos }
+ *   - municipios_mais_contratam → { municipio, contratos }
+ *   - municipios_mais_gastam    → { municipio, gasto }
+ *   - modalidades_mais_contratam → { modalidade, valor }
+ *   - modalidades_mais_gastam   → { modalidade, valor }
+ *   - evolucao_gastos_ano       → { mes, valor }
  */
-export const getDashboardData = async (cityId?: string | null): Promise<DashboardData> => {
-  // Simula latência de rede
-  await new Promise((r) => setTimeout(r, 0));
+export const getDashboardApiData = async (): Promise<DashboardApiResponse> => {
+  const base = API_BASE.endsWith('/') ? API_BASE : `${API_BASE}/`;
+  const url = `${base}`;
 
-  if (!cityId) return DASHBOARD_GERAL;
-  return getDashboardForCity(cityId);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar dados do dashboard: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json() as Promise<any>;
 };
 
-/**
- * Retorna métricas detalhadas de uma cidade específica.
- * @param cityId - ID da cidade
- */
+
+const PARAIBA_GERAL: CityMetrics = {
+  id: 'paraiba',
+  name: 'Estado da Paraíba',
+  totalContratos: 12_450,
+  valorTotal: 850_000_000,
+  anomalias: 47,
+  categoriaPredominante: 'Saúde',
+  fornecedorRecorrente: 'Empresa XYZ Ltda.',
+};
+
 export const getCityData = async (cityId: string): Promise<CityMetrics> => {
   await new Promise((r) => setTimeout(r, 0));
-
-  return CIDADES_MOCK[cityId] ?? {
+  return {
     ...PARAIBA_GERAL,
     id: cityId,
     name: cityId.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
@@ -49,9 +59,6 @@ export const getCityData = async (cityId: string): Promise<CityMetrics> => {
   };
 };
 
-/**
- * Retorna métricas gerais do estado.
- */
 export const getStateData = async (): Promise<CityMetrics> => {
   await new Promise((r) => setTimeout(r, 0));
   return PARAIBA_GERAL;

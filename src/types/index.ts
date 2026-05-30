@@ -55,3 +55,39 @@ export interface ChatMessage {
   content: string;
   timestamp: Date;
 }
+
+// ─── Tipos da API real ────────────────────────────────────────────────────────
+
+export interface OrgaoContrato {
+  orgao: string;
+  contratos: number;
+}
+
+export interface MunicipioContrato {
+  municipio: string;
+  contratos: number;
+}
+
+export interface MunicipioGasto {
+  municipio: string;
+  gasto: number;
+}
+
+export interface ModalidadeGasto {
+  modalidade: string;
+  valor: number;
+}
+
+export interface EvolucaoGastoMes {
+  mes: string;
+  valor: number;
+}
+
+export interface DashboardApiResponse {
+  orgaos_mais_contratam: OrgaoContrato[];
+  municipios_mais_contratam: MunicipioContrato[];
+  municipios_mais_gastam: MunicipioGasto[];
+  modalidades_mais_contratam: ModalidadeGasto[];
+  modalidades_mais_gastam: ModalidadeGasto[];
+  evolucao_gastos_ano: EvolucaoGastoMes[];
+}

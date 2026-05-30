@@ -44,6 +44,8 @@ const MapaParaiba: React.FC = () => {
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
+    let mounted = true; // guard for async fetch
+
     const PB_BOUNDS = L.latLngBounds(
       L.latLng(-8.35, -38.85),  // SW
       L.latLng(-5.90, -34.75),  // NE
@@ -68,6 +70,9 @@ const MapaParaiba: React.FC = () => {
     fetch('/PB.json')
       .then((r) => r.json())
       .then((geojson: GeoJSON.FeatureCollection) => {
+        // If unmounted while fetching, do nothing
+        if (!mounted) return;
+
         const total = geojson.features.length;
 
         const geoLayer = L.geoJSON(geojson, {
@@ -127,6 +132,7 @@ const MapaParaiba: React.FC = () => {
 
     mapRef.current = map;
     return () => {
+      mounted = false;
       map.remove();
       mapRef.current = null;
     };
