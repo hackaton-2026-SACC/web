@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
-  FileText, DollarSign, AlertTriangle, Tag,
+  FileText, DollarSign, AlertTriangle,
   Building2, MapPin, Info, X,
 } from "lucide-react";
 import { useAppContext } from "../hooks/useAppContext";
-import { getCityData, getStateData } from "../services/dashboard.service";
+import { getCityData, getDashboardApiData } from "../services/dashboard.service";
 import type { CityMetrics } from "../types";
 
 const fmt = (v: number): string => {
@@ -19,7 +19,7 @@ interface MetricCardProps {
 }
 const MetricCard: React.FC<MetricCardProps> = ({ label, value, icon, accent, bg }) => (
   <div className="bg-gray-50 hover:bg-gray-100 rounded-xl p-3 flex flex-col gap-2 transition-colors">
-    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+    <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
          style={{ background: bg, color: accent }}>
       {icon}
     </div>
@@ -36,14 +36,34 @@ interface PainelLateralProps {
 const PainelLateral: React.FC<PainelLateralProps> = ({ isModal = false, onClose }) => {
   const { selectedCity } = useAppContext();
   const [metrics, setMetrics] = useState<CityMetrics | null>(null);
+  const [stateData, setStateData] = useState<{ totalContratos: number; valorTotal: number } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
     const run = async () => {
-      const data = selectedCity ? await getCityData(selectedCity.id) : await getStateData();
-      setMetrics(data);
-      setLoading(false);
+      try {
+        if (selectedCity) {
+          // Buscar dados do município selecionado
+          const data = await getCityData(selectedCity.id);
+          setMetrics(data);
+          setStateData(null);
+        } else {
+          // Buscar dados gerais do estado da API real
+          const apiData = await getDashboardApiData();
+          setStateData({
+            totalContratos: apiData.total_contratos || 0,
+            valorTotal: apiData.total_estado || 0,
+          });
+          setMetrics(null);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        setMetrics(null);
+        setStateData(null);
+      } finally {
+        setLoading(false);
+      }
     };
     run();
   }, [selectedCity]);
@@ -63,13 +83,13 @@ const PainelLateral: React.FC<PainelLateralProps> = ({ isModal = false, onClose 
     }>
       {/* Drag handle (mobile only) */}
       {isModal && (
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+        <div className="flex justify-center pt-3 pb-1 shrink-0">
           <div className="w-10 h-1 bg-gray-300 rounded-full" />
         </div>
       )}
 
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 flex-shrink-0 sticky top-0 bg-white z-10">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0 sticky top-0 bg-white z-10">
         <div className="flex items-center gap-1.5">
           {selectedCity ? (
             <>
@@ -112,16 +132,13 @@ const PainelLateral: React.FC<PainelLateralProps> = ({ isModal = false, onClose 
                 icon={<FileText size={16} />} accent="#1a73e8" bg="#e8f0fe" />
               <MetricCard label="Valor Total" value={fmt(metrics.valorTotal)}
                 icon={<DollarSign size={16} />} accent="#34a853" bg="#e6f4ea" />
-              <MetricCard label="Anomalias" value={metrics.anomalias.toString()}
-                icon={<AlertTriangle size={16} />} accent="#ea4335" bg="#fce8e6" />
-              <MetricCard label="Categoria Líder" value={metrics.categoriaPredominante}
-                icon={<Tag size={16} />} accent="#fbbc04" bg="#fef9e7" />
+            
             </div>
 
             <div className="flex flex-col gap-2">
               <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Fornecedor Recorrente</p>
               <div className="bg-gray-50 rounded-xl px-3 py-2.5 flex items-center gap-3">
-                <Building2 size={20} className="text-gray-400 flex-shrink-0" />
+                <Building2 size={20} className="text-gray-400 shrink-0" />
                 <div className="flex flex-col min-w-0">
                   <span className="text-[13px] font-semibold text-gray-900 truncate">{metrics.fornecedorRecorrente}</span>
                   <span className="text-[11px] text-gray-400">Mais contratos no período</span>
@@ -133,7 +150,7 @@ const PainelLateral: React.FC<PainelLateralProps> = ({ isModal = false, onClose 
               <div className="flex flex-col gap-2">
                 <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Alertas</p>
                 <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-3">
-                  <AlertTriangle size={22} className="text-red-500 flex-shrink-0" />
+                  <AlertTriangle size={22} className="text-red-500 shrink-0" />
                   <div>
                     <div className="text-[22px] font-extrabold text-red-600">{metrics.anomalias}</div>
                     <div className="text-[12px] text-red-400">
@@ -146,10 +163,28 @@ const PainelLateral: React.FC<PainelLateralProps> = ({ isModal = false, onClose 
 
             {!selectedCity && (
               <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 rounded-xl p-3 text-[12px] text-blue-700">
-                <MapPin size={15} className="flex-shrink-0 mt-0.5" />
+                <MapPin size={15} className="shrink-0 mt-0.5" />
                 <span>Clique em um município no mapa para ver os dados detalhados.</span>
               </div>
             )}
+          </div>
+        ) : stateData ? (
+          <div className="p-4 flex flex-col gap-4">
+            <h2 className="text-[22px] font-bold text-gray-900 tracking-tight font-[Google_Sans,Inter,system-ui] leading-tight">
+              Estado da Paraíba
+            </h2>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              <MetricCard label="Total de Contratos" value={stateData.totalContratos.toLocaleString("pt-BR")}
+                icon={<FileText size={16} />} accent="#1a73e8" bg="#e8f0fe" />
+              <MetricCard label="Valor Total" value={fmt(stateData.valorTotal)}
+                icon={<DollarSign size={16} />} accent="#34a853" bg="#e6f4ea" />
+            </div>
+
+            <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 rounded-xl p-3 text-[12px] text-blue-700">
+              <MapPin size={15} className="shrink-0 mt-0.5" />
+              <span>Clique em um município no mapa para ver os dados detalhados.</span>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-3 py-16 text-gray-400 text-[13px]">

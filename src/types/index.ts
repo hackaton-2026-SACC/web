@@ -84,6 +84,8 @@ export interface EvolucaoGastoMes {
 }
 
 export interface DashboardApiResponse {
+  total_estado: number;
+  total_contratos: number;
   orgaos_mais_contratam: OrgaoContrato[];
   municipios_mais_contratam: MunicipioContrato[];
   municipios_mais_gastam: MunicipioGasto[];
