@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, User, Bot } from "lucide-react";
+import { Send, User, Bot, WifiOff } from "lucide-react";
 import { useAppContext } from "../hooks/useAppContext";
+import { useSessionId } from "../hooks/useSessionId";
 import { getChatResponse, createMessage } from "../services/chat.service";
 import type { ChatMessage } from "../types";
 
@@ -43,12 +44,20 @@ const QUICK_QUESTIONS = [
 
 const ChatContextual: React.FC = () => {
   const { selectedCity } = useAppContext();
+  const sessionId = useSessionId();
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const prevCityRef = useRef<string | null>(null);
+
+  // Scroll para a última mensagem
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
 
   useEffect(() => {
     const currentId = selectedCity?.id ?? null;
@@ -70,13 +79,17 @@ const ChatContextual: React.FC = () => {
     const text = input.trim();
     if (!text || isTyping) return;
     setCollapsed(false);
+    setError(null);
     setMessages((prev) => [...prev, createMessage("user", text)]);
     setInput("");
     setIsTyping(true);
     try {
-      const ctx = selectedCity?.name ?? "Estado da Paraíba";
-      const resp = await getChatResponse(text, selectedCity?.id ?? null, ctx);
+      const cityName = selectedCity?.name ?? "Estado da Paraíba";
+      const resp = await getChatResponse(sessionId, text, cityName);
       setMessages((prev) => [...prev, createMessage("assistant", resp)]);
+    } catch (err) {
+      console.error("[Chat] Erro na requisição:", err);
+      setError("Não foi possível conectar ao assistente. Verifique sua conexão e tente novamente.");
     } finally {
       setIsTyping(false);
       inputRef.current?.focus();
@@ -120,6 +133,20 @@ const ChatContextual: React.FC = () => {
             ))}
           </div>
 
+          {/* Erro de rede */}
+          {error && (
+            <div className="mx-3 sm:mx-4 mt-2 flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg text-[12px] text-red-700">
+              <WifiOff size={14} className="flex-shrink-0" />
+              <span>{error}</span>
+              <button
+                onClick={() => setError(null)}
+                className="ml-auto text-red-400 hover:text-red-600 text-[11px] underline flex-shrink-0"
+              >
+                Fechar
+              </button>
+            </div>
+          )}
+
           {/* Messages */}
           <div className="overflow-y-auto px-3 sm:px-4 py-3 sm:py-4 flex flex-col gap-3 sm:gap-3.5 min-h-[160px] max-h-[260px] sm:max-h-[340px]">
             {messages.map((msg) => (
@@ -158,6 +185,8 @@ const ChatContextual: React.FC = () => {
                 </div>
               </div>
             ))}
+
+            <div ref={messagesEndRef} />
 
             {/* Typing indicator */}
             {isTyping && (

@@ -62,8 +62,8 @@ const Home: React.FC = () => {
           onClick={() => setDashboardExpanded(!dashboardExpanded)}
         >
           <div className="flex items-center gap-2">
-            <Zap size={20} className="text-blue-600" />
-            <h2 className="font-bold text-gray-900">Dashboard</h2>
+            <Zap size={20} className="text-gray-700" />
+            <h2 className="font-semibold font-[Google_Sans,Inter,system-ui] text-gray-700">Dashboard</h2>
           </div>
           <div className={`transform transition-transform ${dashboardExpanded ? 'rotate-180' : ''}`}>
             <ChevronDown size={20} className="text-gray-600" />
@@ -82,8 +82,8 @@ const Home: React.FC = () => {
           onClick={() => setMapExpanded(!mapExpanded)}
         >
           <div className="flex items-center gap-2">
-            <MapPin size={20} className="text-blue-600" />
-            <h2 className="font-bold text-gray-900">Mapa</h2>
+            <MapPin size={20} className="text-gray-700" />
+            <h2 className="font-bold font-[Google_Sans,Inter,system-ui] text-gray-700">Mapa</h2>
           </div>
           <div className={`transform transition-transform ${mapExpanded ? 'rotate-180' : ''}`}>
             <ChevronDown size={20} className="text-gray-600" />
@@ -110,8 +110,8 @@ const Home: React.FC = () => {
           onClick={() => setChatExpanded(!chatExpanded)}
         >
           <div className="flex items-center gap-2">
-            <MessageSquare size={20} className="text-blue-600" />
-            <h2 className="font-bold text-gray-900">Chat</h2>
+            <MessageSquare size={20} className="text-gray-700" />
+            <h2 className="font-bold font-[Google_Sans,Inter,system-ui] text-gray-700">Chat</h2>
           </div>
           <div className={`transform transition-transform ${chatExpanded ? 'rotate-180' : ''}`}>
             <ChevronDown size={20} className="text-gray-600" />
@@ -125,27 +125,7 @@ const Home: React.FC = () => {
         )}
       </div>
 
-      {/* Scroll Navigation Button - Mobile only */}
-      {isMobile && (
-        <div className="fixed bottom-6 right-4 flex flex-col gap-2 z-50">
-          <button
-            onClick={scrollPageUp}
-            className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95"
-            aria-label="Scroll para cima"
-            title="Scroll para cima"
-          >
-            <ChevronUp size={20} />
-          </button>
-          <button
-            onClick={scrollPageDown}
-            className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95"
-            aria-label="Scroll para baixo"
-            title="Scroll para baixo"
-          >
-            <ChevronDown size={20} />
-          </button>
-        </div>
-      )}
+
     </div>
   );
 };

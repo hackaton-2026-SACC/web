@@ -6,10 +6,10 @@ const Header: React.FC = () => {
   const { selectedCity, setSelectedCity } = useAppContext();
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between h-16 px-4 sm:px-6 bg-white border-b border-gray-200 shadow-sm gap-3">
+    <header className="sticky top-0 z-50 flex items-center justify-between h-16 px-4 sm:px-6 bg-white border-b border-gray-200 shadow-none gap-3">
       {/* Logo */}
       <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
-        <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+        <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-none">
           <MapPin size={16} className="text-white" />
         </div>
         <div className="flex flex-col leading-tight">

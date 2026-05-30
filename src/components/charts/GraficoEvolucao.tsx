@@ -24,7 +24,7 @@ const TOOLTIP_STYLE = {
 };
 
 const GraficoEvolucao: React.FC<Props> = ({ data }) => (
-  <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col gap-3.5 hover:shadow-md transition-shadow">
+  <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-none flex flex-col gap-3.5 hover:shadow-md transition-shadow">
     <div className="flex items-baseline justify-between gap-2">
       <h3 className="text-[14px] font-semibold text-gray-900">Evolução Temporal</h3>
       <span className="text-[12px] text-gray-400 whitespace-nowrap">Contratos e valor (R$ mi) por mês</span>

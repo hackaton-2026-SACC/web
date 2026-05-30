@@ -46,7 +46,7 @@ const About: FC = () => {
         <h3 className="text-xl font-bold text-gray-900 mb-6">Key Features</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {features.map((feature, idx) => (
-            <div key={idx} className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div key={idx} className="bg-white rounded-lg p-6 shadow-none border border-gray-100 hover:shadow-md transition-shadow">
               <div className="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <feature.icon size={24} className="text-blue-600" />
               </div>
@@ -58,7 +58,7 @@ const About: FC = () => {
       </div>
 
       {/* Tech Stack */}
-      <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-100">
+      <div className="bg-white rounded-lg p-8 shadow-none border border-gray-100">
         <h3 className="text-xl font-bold text-gray-900 mb-6">Technology Stack</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
@@ -81,13 +81,13 @@ const About: FC = () => {
 
       {/* Info Boxes */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-lg p-6 shadow-none border border-gray-100">
           <h4 className="text-lg font-bold text-gray-900 mb-3">Responsive Design</h4>
           <p className="text-gray-600 mb-4">
             Beautiful on all devices - desktop, tablet, and mobile. The dashboard automatically adapts to different screen sizes.
           </p>
         </div>
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-lg p-6 shadow-none border border-gray-100">
           <h4 className="text-lg font-bold text-gray-900 mb-3">Easy to Customize</h4>
           <p className="text-gray-600 mb-4">
             Tailored with Tailwind CSS and organized component structure. Modify colors, layouts, and features quickly.

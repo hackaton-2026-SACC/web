@@ -41,7 +41,7 @@ const Settings: FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Settings Navigation */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 space-y-2">
+          <div className="bg-white rounded-lg shadow-none border border-gray-100 p-6 space-y-2">
             <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 text-blue-600 font-medium cursor-pointer">
               <Globe size={20} />
               <span>General</span>
@@ -65,7 +65,7 @@ const Settings: FC = () => {
         <div className="lg:col-span-2">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* General Settings */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-lg shadow-none border border-gray-100 p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-6">General Settings</h2>
               
               <div className="space-y-6">
@@ -94,7 +94,7 @@ const Settings: FC = () => {
             </div>
 
             {/* Notification Settings */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <div className="bg-white rounded-lg shadow-none border border-gray-100 p-6">
               <h2 className="text-lg font-bold text-gray-900 mb-6">Notification Preferences</h2>
               
               <div className="space-y-4">

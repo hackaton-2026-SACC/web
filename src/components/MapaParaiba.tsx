@@ -186,7 +186,7 @@ const MapaParaiba: React.FC = () => {
         </div>
       )}
 
-      <div className="absolute bottom-4 left-4 z-10 bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 flex flex-col gap-1.5 shadow-sm">
+      <div className="absolute bottom-4 left-4 z-10 bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 flex flex-col gap-1.5 shadow-none">
         <div className="text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-0.5">Municípios</div>
         <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-0.5">Clique para informações sobre um município</div>
 

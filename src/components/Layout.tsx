@@ -6,7 +6,7 @@ export default function Layout() {
     <div className="flex h-screen bg-gray-50 font-sans">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex justify-between items-center h-16 px-8 bg-white shadow-sm border-b border-gray-200">
+        <header className="flex justify-between items-center h-16 px-8 bg-white shadow-none border-b border-gray-200">
           <div className="flex items-center">
             <h2 className="text-lg font-medium text-gray-900">Dashboard</h2>
           </div>

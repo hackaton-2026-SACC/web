@@ -74,7 +74,7 @@ const Dashboard: FC = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat, idx) => (
-          <div key={idx} className="bg-white rounded-lg p-4 md:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <div key={idx} className="bg-white rounded-lg p-4 md:p-6 shadow-none border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <p className="text-xs md:text-sm font-medium text-gray-600 truncate">{stat.name}</p>
@@ -95,7 +95,7 @@ const Dashboard: FC = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Chart */}
-        <div className="lg:col-span-2 bg-white rounded-lg p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="lg:col-span-2 bg-white rounded-lg p-4 md:p-6 shadow-none border border-gray-100">
           <div className="flex items-center justify-between mb-4 md:mb-6 flex-wrap gap-2">
             <h2 className="text-base md:text-lg font-bold text-gray-900">Performance Trend</h2>
             <button className="text-xs md:text-sm text-blue-600 hover:text-blue-700 font-medium">View all</button>
@@ -111,7 +111,7 @@ const Dashboard: FC = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-lg p-4 md:p-6 shadow-none border border-gray-100">
           <h2 className="text-base md:text-lg font-bold text-gray-900 mb-4 md:mb-6">Key Metrics</h2>
           <div className="space-y-3 md:space-y-4">
             <div className="flex items-center justify-between pb-3 md:pb-4 border-b border-gray-100">
@@ -147,7 +147,7 @@ const Dashboard: FC = () => {
       </div>
 
       {/* Map Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 md:p-6 relative z-0">
+      <div className="bg-white rounded-lg shadow-none border border-gray-100 p-4 md:p-6 relative z-0">
         <h2 className="text-base md:text-lg font-bold text-gray-900 mb-4">Location Overview</h2>
         <div className="h-64 sm:h-80 md:h-96 w-full rounded-lg overflow-hidden border border-gray-200 relative z-0">
           <MapContainer 

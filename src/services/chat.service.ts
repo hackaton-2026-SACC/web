@@ -2,32 +2,65 @@
  * chat.service.ts
  *
  * Camada de serviço para o chat contextual.
- * Atualmente retorna respostas mockadas com correspondência por palavras-chave.
+ * Chama o endpoint real em https://chat-production-487e.up.railway.app/chat
  *
- * Exemplo de migração futura para LLM:
- *   import axios from 'axios';
- *   export const getChatResponse = (message: string, cityId?: string | null) =>
- *     axios.post(`${BASE_URL}/chat`, { message, cityId }).then(r => r.data.response);
+ * Contrato da API:
+ *   POST /chat
+ *   Body:  { request_id: string, text: string }
+ *   200:   { request_id: string, response: string }
  */
 
-import { getMockChatResponse } from '../mocks/chatMock';
+import axios from 'axios';
 import type { ChatMessage } from '../types';
 
+const API_BASE = 'https://chat-production-487e.up.railway.app/';
+
+const chatApi = axios.create({
+  baseURL: API_BASE,
+  timeout: 30_000, // 30s — LLMs podem demorar
+  headers: { 'Content-Type': 'application/json' },
+});
+
+interface ChatRequest {
+  request_id: string;
+  text: string;
+}
+
+interface ChatApiResponse {
+  request_id: string;
+  response: string;
+}
+
 /**
- * Envia uma mensagem e retorna a resposta do assistente.
- * @param message - Mensagem do usuário
- * @param cityId - ID da cidade selecionada (null = contexto estadual)
- * @param cityName - Nome do contexto atual para exibição
+ * Monta o texto completo enviado ao backend, incluindo o contexto
+ * de cidade/estado para que o LLM responda de forma contextualizada.
+ */
+const buildContextualText = (
+  message: string,
+  cityName: string,
+): string => {
+  return `[Contexto cidade/estado da PB: ${cityName}]\n\n${message}`;
+};
+
+/**
+ * Envia uma mensagem ao backend e retorna a resposta do LLM.
+ *
+ * @param sessionId - UUID da sessão do usuário (persistido por browser)
+ * @param message   - Texto digitado pelo usuário
+ * @param cityName  - Nome do contexto atual (cidade ou "Estado da Paraíba")
  */
 export const getChatResponse = async (
+  sessionId: string,
   message: string,
-  cityId: string | null,
   cityName: string,
 ): Promise<string> => {
-  // Simula latência de processamento do LLM
-  await new Promise((r) => setTimeout(r, 800 + Math.random() * 600));
+  const body: ChatRequest = {
+    request_id: sessionId,
+    text: buildContextualText(message, cityName),
+  };
 
-  return getMockChatResponse(message, cityId, cityName);
+  const { data } = await chatApi.post<ChatApiResponse>('/chat', body);
+  return data.response;
 };
 
 /**

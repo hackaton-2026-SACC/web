@@ -17,7 +17,7 @@ const Sidebar: FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-white shadow-sm border-r border-gray-200">
+    <aside className="w-64 bg-white shadow-none border-r border-gray-200">
       <div className="flex items-center justify-center h-16 px-6 border-b border-gray-200">
         <h1 className="text-xl font-bold text-blue-600">MyApp</h1>
       </div>
